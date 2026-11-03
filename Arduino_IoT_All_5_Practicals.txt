@@ -1,0 +1,1384 @@
+Arduino & IoT – All 5 Practical Explanations with Complete Programs
+
+Five practicals · Beginner-friendly explanations · Circuit connections ·
+Complete programs · Execution steps · Viva preparation
+
+I’ll explain each practical separately, starting from the basic concept
+and then covering components, connections, complete code, how the
+program works, and execution steps.
+
+The explanations are written in simple language so you can understand
+them and explain them during your college practical examination.
+
+============================================================ PRACTICAL
+1: TEMPERATURE MONITORING USING TMP36 SENSOR AND ARDUINO UNO
+============================================================
+
+1.  Aim
+
+To design a program using Arduino Uno and a TMP36 temperature sensor to
+monitor temperature and generate an alert when the temperature exceeds a
+predefined limit.
+
+2.  What is this practical?
+
+In this practical, we use a TMP36 temperature sensor to measure the
+surrounding temperature.
+
+The TMP36 sensor converts temperature into an analog voltage. Arduino
+reads this voltage and converts it into Celsius.
+
+If the temperature is greater than the predefined limit: • LED turns ON.
+• An alert message is displayed on Serial Monitor.
+
+If the temperature is below the limit: • LED remains OFF. • Normal
+temperature is displayed.
+
+3.  Components required
+
+• Arduino Uno R3 • TMP36 temperature sensor • LED • 220 Ω resistor •
+Breadboard • Jumper wires • USB cable
+
+4.  Pin connections
+
+TMP36 / LED | Arduino Uno TMP36 left pin (+Vs) | 5V TMP36 middle pin
+(Vout) | A0 TMP36 right pin (GND) | GND LED positive through resistor |
+D8 LED negative | GND
+
+Hold TMP36 with its flat surface facing you and legs pointing downward.
+Its pins are normally +Vs, Vout and GND from left to right.
+
+5.  Working principle
+
+TMP36 Sensor Measures temperature
+
+↓ Arduino Uno Reads analog voltage at A0
+
+↓ Temperature Calculation
+
+↓ Temperature normal: LED OFF Temperature high: LED ON
+
+Important formula:
+
+Temperature = (Voltage - 0.5) / 0.01
+
+The TMP36 produces 0.5 V at 0°C and changes by 0.01 V for every 1°C.
+
+6.  Complete Arduino program
+
+Replace [TEMP_LIMIT] with the required numerical temperature threshold.
+
+    int sensorPin = A0;
+    int ledPin = 8;
+
+    float temperature;
+    float voltage;
+
+    const float TEMP_LIMIT = [TEMP_LIMIT];
+
+    void setup()
+    {
+      Serial.begin(9600);
+
+      pinMode(ledPin, OUTPUT);
+
+      Serial.println("Temperature Monitoring Started");
+    }
+
+    void loop()
+    {
+      int sensorValue = analogRead(sensorPin);
+
+      voltage = sensorValue * (5.0 / 1023.0);
+
+      temperature = (voltage - 0.5) * 100.0;
+
+      Serial.print("Temperature: ");
+      Serial.print(temperature);
+      Serial.println(" C");
+
+      if (temperature > TEMP_LIMIT)
+      {
+        digitalWrite(ledPin, HIGH);
+
+        Serial.println("ALERT! High Temperature");
+      }
+      else
+      {
+        digitalWrite(ledPin, LOW);
+
+        Serial.println("Temperature Normal");
+      }
+
+      delay(1000);
+    }
+
+7.  Explanation of the code
+
+8.  sensorPin = A0: Reads temperature sensor data.
+
+9.  ledPin = 8: Connects the LED to digital pin 8.
+
+10. Serial.begin(9600): Starts serial communication.
+
+11. analogRead(A0): Reads analog sensor values between 0 and 1023.
+
+12. voltage: Converts the analog value into voltage.
+
+13. temperature: Converts voltage into Celsius.
+
+14. if: Checks whether temperature exceeds the limit.
+
+15. digitalWrite(): Switches the LED ON or OFF.
+
+16. delay(1000): Waits one second before taking the next reading.
+
+17. How to run
+
+18. Open Arduino IDE.
+
+19. Connect Arduino Uno using USB.
+
+20. Select Tools → Board → Arduino Uno.
+
+21. Select the correct COM port.
+
+22. Connect TMP36 and LED.
+
+23. Paste the program.
+
+24. Replace [TEMP_LIMIT] with a numerical value.
+
+25. Click Verify.
+
+26. Click Upload.
+
+27. Open Serial Monitor.
+
+28. Set baud rate to 9600.
+
+29. Observe the temperature and alert messages.
+
+30. Expected output
+
+    Temperature Monitoring Started
+
+    Temperature: 28.00 C
+    Temperature Normal
+
+    Temperature: 32.00 C
+    Temperature Normal
+
+    Temperature: 45.00 C
+    ALERT! High Temperature
+
+The readings above are illustrative, not guaranteed sensor measurements.
+
+10. Viva questions
+
+Q1. What is TMP36?
+
+TMP36 is an analog temperature sensor used to measure surrounding
+temperature.
+
+Q2. Which pin is used to read temperature?
+
+Analog pin A0.
+
+Q3. What is analogRead()?
+
+It reads analog input values between 0 and 1023 on the standard 10-bit
+Arduino Uno ADC.
+
+Q4. Why is an LED used?
+
+To provide a visual alert when temperature exceeds the predefined limit.
+
+Q5. What is the output of TMP36?
+
+An analog voltage proportional to temperature.
+
+============================================================ PRACTICAL
+2: PIR MOTION DETECTION USING ARDUINO UNO IN TINKERCAD
+============================================================
+
+1.  Aim
+
+To interface a PIR sensor with Arduino Uno in Tinkercad and detect
+motion using an LED and Serial Monitor.
+
+2.  What is this practical?
+
+PIR stands for Passive Infrared Sensor.
+
+It detects movement by sensing changes in infrared radiation from
+objects, especially humans.
+
+When a person moves in front of the sensor: • PIR output becomes HIGH. •
+Arduino detects motion. • LED turns ON. • Serial Monitor displays a
+motion detection message.
+
+When there is no motion: • PIR output becomes LOW. • LED turns OFF.
+
+3.  Components required
+
+• Arduino Uno R3 • PIR sensor • LED • 220 Ω resistor • Breadboard •
+Jumper wires • Tinkercad software
+
+4.  Pin connections
+
+PIR / LED | Arduino Uno PIR VCC | 5V PIR GND | GND PIR OUT | D2 LED
+positive through resistor | D13 LED negative | GND
+
+5.  Working principle
+
+PIR Sensor Detects infrared changes
+
+↓ Arduino Uno – D2 Reads digital signal
+
+↓ HIGH: Motion detected, LED ON LOW: No motion, LED OFF
+
+6.  Complete Arduino program
+
+    int pirPin = 2;
+    int ledPin = 13;
+
+    int motionState = LOW;
+    int previousState = LOW;
+
+    void setup()
+    {
+      pinMode(pirPin, INPUT);
+
+      pinMode(ledPin, OUTPUT);
+
+      Serial.begin(9600);
+
+      Serial.println("PIR Motion Detection Started");
+    }
+
+    void loop()
+    {
+      motionState = digitalRead(pirPin);
+
+      if (motionState == HIGH)
+      {
+        digitalWrite(ledPin, HIGH);
+
+        if (previousState == LOW)
+        {
+          Serial.println("Motion Detected!");
+
+          previousState = HIGH;
+        }
+      }
+      else
+      {
+        digitalWrite(ledPin, LOW);
+
+        if (previousState == HIGH)
+        {
+          Serial.println("No Motion Detected");
+
+          previousState = LOW;
+        }
+      }
+
+      delay(100);
+    }
+
+7.  Explanation of the code
+
+8.  pirPin = 2: PIR output is connected to D2.
+
+9.  ledPin = 13: LED is connected to D13.
+
+10. pinMode(): Defines sensor as input and LED as output.
+
+11. digitalRead(): Reads the PIR sensor output.
+
+12. HIGH: Indicates motion detected.
+
+13. LOW: Indicates no motion.
+
+14. digitalWrite(): Controls LED.
+
+15. Serial.println(): Displays messages.
+
+16. previousState: Prevents the same message from printing continuously
+    while the sensor remains in one state.
+
+17. How to run in Tinkercad
+
+18. Visit Tinkercad: https://www.tinkercad.com/
+
+19. Login to your account.
+
+20. Select Circuits.
+
+21. Click Create New Circuit.
+
+22. Add Arduino Uno.
+
+23. Add PIR sensor, LED and resistor.
+
+24. Connect the components according to the table.
+
+25. Open Code.
+
+26. Select Text mode.
+
+27. Paste the program.
+
+28. Click Start Simulation.
+
+29. Open Serial Monitor.
+
+30. Change the PIR motion state using the simulation controls if
+    available.
+
+31. Observe the LED and messages.
+
+32. Expected output
+
+    PIR Motion Detection Started
+
+    Motion Detected!
+
+    No Motion Detected
+
+10. Viva questions
+
+Q1. What is PIR?
+
+Passive Infrared Sensor.
+
+Q2. What does a PIR sensor detect?
+
+It detects changes in infrared radiation caused by movement.
+
+Q3. Which pin is connected to PIR OUT?
+
+Digital pin D2.
+
+Q4. What is the meaning of HIGH?
+
+Motion is detected.
+
+Q5. Where can PIR sensors be used?
+
+Security systems, automatic lights and smart homes.
+
+============================================================ PRACTICAL
+3: ESP32-BASED WEB SERVER TO CONTROL TWO LEDs USING WI-FI
+============================================================
+
+1.  Aim
+
+To develop an ESP32-based web server that allows users to control two
+LEDs through a webpage using Wi-Fi.
+
+2.  What is this practical?
+
+In this practical, we use ESP32 to control two LEDs wirelessly.
+
+ESP32 has built-in Wi-Fi, so it can connect to a Wi-Fi network and
+create a web server.
+
+A webpage is created inside the ESP32 program. The user opens the ESP32
+IP address in a browser and gets ON/OFF buttons for two LEDs.
+
+• LED 1 is connected to GPIO 12. • LED 2 is connected to GPIO 14. • Both
+LEDs can be controlled independently using a webpage.
+
+3.  Components required
+
+• ESP32 development board • Two LEDs • Two 220 Ω resistors • Breadboard
+• Jumper wires • Wi-Fi connection • Computer or smartphone
+
+4.  Pin connections
+
+Component | ESP32 pin LED 1 positive through resistor | GPIO 12 LED 1
+negative | GND LED 2 positive through resistor | GPIO 14 LED 2 negative
+| GND
+
+Remember: GPIO pins operate at 3.3 V logic. GPIO 12 is a boot-strapping
+pin, so ensure the external circuit does not interfere with ESP32
+startup.
+
+5.  Working principle
+
+Mobile / Computer User opens webpage
+
+↓
+
+Wi-Fi Network
+
+↓
+
+ESP32 Web Server
+
+↓
+
+GPIO 12: LED 1 GPIO 14: LED 2
+
+How it works:
+
+1.  ESP32 connects to Wi-Fi.
+
+2.  ESP32 starts a web server.
+
+3.  It displays its IP address in Serial Monitor.
+
+4.  User enters the IP address in a browser.
+
+5.  Webpage displays LED ON/OFF buttons.
+
+6.  When the user presses a button, ESP32 receives a request.
+
+7.  ESP32 changes the corresponding GPIO output.
+
+8.  Complete ESP32 program
+
+Replace the Wi-Fi placeholders with your actual Wi-Fi details.
+
+    #include <WiFi.h>
+    #include <WebServer.h>
+
+    const char* ssid = "[WIFI_SSID]";
+    const char* password = "[WIFI_PASSWORD]";
+
+    const int LED1 = 12;
+    const int LED2 = 14;
+
+    WebServer server(80);
+
+    bool led1State = false;
+    bool led2State = false;
+
+    void updateLEDs()
+    {
+      digitalWrite(LED1, led1State);
+      digitalWrite(LED2, led2State);
+    }
+
+    void handleRoot()
+    {
+      String webpage = R"rawliteral(
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>ESP32 LED Control</title>
+        <meta name="viewport"
+        content="width=device-width, initial-scale=1">
+      </head>
+
+      <body style="text-align:center;font-family:Arial;">
+
+        <h1>ESP32 LED Control</h1>
+
+        <h2>LED 1</h2>
+
+        <a href="/led1/on">
+        <button>LED 1 ON</button></a>
+
+        <a href="/led1/off">
+        <button>LED 1 OFF</button></a>
+
+        <h2>LED 2</h2>
+
+        <a href="/led2/on">
+        <button>LED 2 ON</button></a>
+
+        <a href="/led2/off">
+        <button>LED 2 OFF</button></a>
+
+      </body>
+      </html>
+      )rawliteral";
+
+      server.send(200, "text/html", webpage);
+    }
+
+    void handleLED1On()
+    {
+      led1State = true;
+      updateLEDs();
+      server.sendHeader("Location", "/");
+      server.send(303);
+    }
+
+    void handleLED1Off()
+    {
+      led1State = false;
+      updateLEDs();
+      server.sendHeader("Location", "/");
+      server.send(303);
+    }
+
+    void handleLED2On()
+    {
+      led2State = true;
+      updateLEDs();
+      server.sendHeader("Location", "/");
+      server.send(303);
+    }
+
+    void handleLED2Off()
+    {
+      led2State = false;
+      updateLEDs();
+      server.sendHeader("Location", "/");
+      server.send(303);
+    }
+
+    void setup()
+    {
+      Serial.begin(115200);
+
+      pinMode(LED1, OUTPUT);
+      pinMode(LED2, OUTPUT);
+
+      updateLEDs();
+
+      WiFi.begin(ssid, password);
+
+      Serial.print("Connecting to WiFi");
+
+      while (WiFi.status() != WL_CONNECTED)
+      {
+        delay(500);
+        Serial.print(".");
+      }
+
+      Serial.println();
+      Serial.println("WiFi Connected!");
+
+      Serial.print("IP Address: ");
+      Serial.println(WiFi.localIP());
+
+      server.on("/", handleRoot);
+
+      server.on("/led1/on", handleLED1On);
+      server.on("/led1/off", handleLED1Off);
+
+      server.on("/led2/on", handleLED2On);
+      server.on("/led2/off", handleLED2Off);
+
+      server.begin();
+
+      Serial.println("Web Server Started");
+    }
+
+    void loop()
+    {
+      server.handleClient();
+    }
+
+7.  Explanation of the code
+
+Code | Meaning #include <WiFi.h> | Includes Wi-Fi functionality #include
+<WebServer.h> | Includes web server functionality WiFi.begin() |
+Connects ESP32 to Wi-Fi WebServer server(80) | Creates server on port 80
+pinMode() | Configures LED pins server.on() | Defines webpage routes
+server.send() | Sends response to browser digitalWrite() | Controls LEDs
+server.begin() | Starts web server server.handleClient() | Handles
+browser requests
+
+8.  How to run the program
+
+9.  Open Arduino IDE.
+
+10. Open Boards Manager.
+
+11. Search for ESP32 and install the Espressif ESP32 board package if
+    needed.
+
+12. Select your ESP32 board.
+
+13. Connect ESP32 to the computer using USB.
+
+14. Select the correct COM port.
+
+15. Connect two LEDs using GPIO 12 and GPIO 14.
+
+16. Paste the program.
+
+17. Enter your Wi-Fi name and password.
+
+18. Click Verify and Upload.
+
+19. Open Serial Monitor.
+
+20. Set baud rate to 115200.
+
+21. Wait until WiFi Connected! appears.
+
+22. Copy the displayed IP address.
+
+23. Open Chrome on your mobile or computer.
+
+24. Enter the IP address.
+
+25. Press the LED ON/OFF buttons.
+
+Important: Your phone and ESP32 must be connected to the same Wi-Fi
+network. Some guest networks and mobile hotspots block communication
+between connected devices.
+
+9.  Expected output
+
+The webpage will show:
+
+    ESP32 LED Control
+
+    LED 1
+    [LED 1 ON] [LED 1 OFF]
+
+    LED 2
+    [LED 2 ON] [LED 2 OFF]
+
+10. Viva questions
+
+Q1. What is ESP32?
+
+ESP32 is a microcontroller with built-in Wi-Fi and Bluetooth.
+
+Q2. What is a web server?
+
+A web server receives browser requests and provides webpages or
+responses.
+
+Q3. What is the use of WiFi.h?
+
+It provides Wi-Fi connection functionality.
+
+Q4. What is GPIO?
+
+General Purpose Input/Output pins used to connect electronic components.
+
+Q5. What is the use of port 80?
+
+Port 80 is the standard port for HTTP communication.
+
+============================================================ PRACTICAL
+4: DESIGN AND DEVELOPMENT OF IIoT APPLICATION FOR SMART HOME ENERGY
+MONITORING AND OPTIMIZATION
+============================================================
+
+1.  Aim
+
+To design and develop a smart home automation system using Arduino Uno,
+temperature sensor and relay modules to monitor temperature and control
+electrical appliances.
+
+2.  What is this practical?
+
+This practical demonstrates how IoT technology can be used in smart
+homes to automate electrical appliances.
+
+We use a temperature sensor to monitor the surrounding temperature.
+
+Arduino reads the temperature and controls two relay modules.
+
+The relays act as electrically controlled switches for a light bulb and
+DC motor.
+
+For this demonstration:
+
+• Relay 1 controls the light bulb. • Relay 2 controls the DC motor. •
+Temperature above the predefined limit switches OFF both loads. • Serial
+Monitor allows us to give manual ON/OFF commands.
+
+This system demonstrates automatic control and energy-saving operation.
+
+Note: Temperature monitoring alone does not measure electricity
+consumption. Actual energy measurement requires additional current and
+voltage sensors.
+
+3.  Components required
+
+• Arduino Uno R3 • Breadboard • TMP36 temperature sensor • Light bulb •
+DC motor • Two relay modules • Jumper wires • Resistor • Suitable DC
+power supply • USB cable
+
+Optional components:
+
+• ACS712 current sensor • Voltage sensor module • LCD display
+
+4.  Pin connections
+
+Component | Arduino Uno TMP36 +Vs | 5V TMP36 Vout | A0 TMP36 GND | GND
+Relay 1 IN | [RELAY_PIN1] Relay 2 IN | [RELAY_PIN2] Relay module VCC |
+5V, if supported Relay module GND | GND
+
+Replace [RELAY_PIN1] and [RELAY_PIN2] in the program with the actual
+digital pins selected for your setup.
+
+5.  Working principle
+
+TMP36 Temperature Sensor Measures temperature
+
+↓
+
+Arduino Uno Processes temperature
+
+↓
+
+Relay 1 and Relay 2
+
+↓
+
+Light bulb and DC motor
+
+Conditions
+
+Temperature normal + ON command | Light bulb ON | DC motor ON
+Temperature normal + OFF command | Light bulb OFF | DC motor OFF
+Temperature exceeds limit | Light bulb OFF | DC motor OFF
+
+6.  Wiring description
+
+Temperature sensor:
+
+• Connect TMP36 positive pin to 5V. • Connect TMP36 middle pin to A0. •
+Connect TMP36 GND to Arduino GND.
+
+Relay modules:
+
+• Connect relay 1 input to [RELAY_PIN1]. • Connect relay 2 input to
+[RELAY_PIN2]. • Connect relay module supply and ground according to its
+specification.
+
+Electrical loads:
+
+• Connect the light bulb through relay 1 contacts. • Connect the DC
+motor through relay 2 contacts. • Use an appropriate power supply for
+the motor.
+
+Electrical safety:
+
+Never connect a mains-powered bulb directly to Arduino or a breadboard.
+Use properly rated, isolated relay modules and enclosed mains wiring
+under qualified supervision. For a classroom demonstration, use
+low-voltage DC loads instead.
+
+7.  Complete Arduino program
+
+Replace all uppercase placeholders before uploading.
+
+    const int sensorPin = A0;
+
+    const int bulbRelay = [RELAY_PIN1];
+    const int motorRelay = [RELAY_PIN2];
+
+    const float TEMP_LIMIT = [TEMP_LIMIT];
+
+    // Change according to relay module
+    const bool RELAY_ACTIVE_LOW = true;
+
+    bool bulbState = false;
+    bool motorState = false;
+
+    void controlRelay(int pin, bool state)
+    {
+      if (RELAY_ACTIVE_LOW)
+      {
+        digitalWrite(pin, state ? LOW : HIGH);
+      }
+      else
+      {
+        digitalWrite(pin, state ? HIGH : LOW);
+      }
+    }
+
+    void setup()
+    {
+      Serial.begin(9600);
+
+      pinMode(bulbRelay, OUTPUT);
+      pinMode(motorRelay, OUTPUT);
+
+      controlRelay(bulbRelay, false);
+      controlRelay(motorRelay, false);
+
+      Serial.println("Smart Home Energy Monitoring");
+      Serial.println("Enter BULB ON or BULB OFF");
+      Serial.println("Enter MOTOR ON or MOTOR OFF");
+    }
+
+    void loop()
+    {
+      int sensorValue = analogRead(sensorPin);
+
+      float voltage = sensorValue * (5.0 / 1023.0);
+
+      float temperature = (voltage - 0.5) * 100.0;
+
+      Serial.print("Temperature: ");
+      Serial.print(temperature);
+      Serial.println(" C");
+
+      bool highTemperature = temperature > TEMP_LIMIT;
+
+      if (Serial.available() > 0)
+      {
+        String command = Serial.readStringUntil('\n');
+
+        command.trim();
+        command.toUpperCase();
+
+        if (command == "BULB ON")
+        {
+          bulbState = true;
+        }
+        else if (command == "BULB OFF")
+        {
+          bulbState = false;
+        }
+        else if (command == "MOTOR ON")
+        {
+          motorState = true;
+        }
+        else if (command == "MOTOR OFF")
+        {
+          motorState = false;
+        }
+        else
+        {
+          Serial.println("Invalid Command");
+        }
+      }
+
+      if (highTemperature)
+      {
+        controlRelay(bulbRelay, false);
+        controlRelay(motorRelay, false);
+
+        Serial.println("High Temperature Alert!");
+        Serial.println("Both Loads OFF");
+      }
+      else
+      {
+        controlRelay(bulbRelay, bulbState);
+        controlRelay(motorRelay, motorState);
+      }
+
+      delay(1000);
+    }
+
+8.  Explanation of the code
+
+9.  sensorPin = A0: Reads the temperature sensor.
+
+10. bulbRelay: Controls the light bulb relay.
+
+11. motorRelay: Controls the motor relay.
+
+12. analogRead(): Reads temperature sensor voltage.
+
+13. Temperature formula converts voltage into Celsius.
+
+14. Serial.available(): Checks whether a command is received.
+
+15. readStringUntil(): Reads the command entered by the user.
+
+16. BULB ON: Requests the bulb to turn ON.
+
+17. MOTOR ON: Requests the motor to turn ON.
+
+18. if (highTemperature): Checks the temperature limit.
+
+19. controlRelay(): Controls the relay according to its active logic.
+
+When temperature exceeds the threshold, the automatic safety condition
+overrides the manual ON commands.
+
+9.  How to run
+
+10. Open Arduino IDE.
+
+11. Select Arduino Uno R3.
+
+12. Connect TMP36 to A0.
+
+13. Connect relay modules to the selected digital pins.
+
+14. Replace all placeholders.
+
+15. Upload the program.
+
+16. Open Serial Monitor at 9600 baud.
+
+17. Set line ending to Newline.
+
+18. Type BULB ON and press Enter.
+
+19. Type BULB OFF and press Enter.
+
+20. Test MOTOR ON and MOTOR OFF.
+
+21. Observe the temperature readings and relay operation.
+
+22. When temperature exceeds the limit, both loads switch OFF.
+
+23. Expected output
+
+    Smart Home Energy Monitoring
+
+    Temperature: 28.00 C
+
+    BULB ON
+
+    Temperature: 28.00 C
+
+    MOTOR ON
+
+    Temperature: 45.00 C
+
+    High Temperature Alert!
+    Both Loads OFF
+
+Illustrative readings only.
+
+11. Viva questions
+
+Q1. What is IIoT?
+
+Industrial Internet of Things connects machines, sensors and industrial
+devices to exchange data.
+
+Q2. What is a relay?
+
+A relay is an electrically operated switch.
+
+Q3. Why do we use a relay?
+
+To control electrical loads using a low-voltage controller.
+
+Q4. What is smart home automation?
+
+It is the automatic monitoring and control of household appliances.
+
+Q5. What is the use of ACS712?
+
+It measures electrical current.
+
+Q6. How can we calculate power?
+
+Power is calculated by multiplying voltage and current.
+
+Q7. How can energy consumption be measured?
+
+By measuring power over time, usually expressed in Wh or kWh.
+
+============================================================ PRACTICAL
+5: INDUSTRIAL DATA ANALYSIS USING MICROSOFT EXCEL
+============================================================
+
+1.  Aim
+
+To perform industrial data analysis using Microsoft Excel and an IoT
+temperature and humidity dataset.
+
+2.  What is this practical?
+
+In this practical, we analyze temperature and humidity data collected
+from IoT sensors.
+
+Industrial sensors continuously collect environmental information. This
+information is stored in a dataset and analyzed using Microsoft Excel.
+
+Excel helps us: • Calculate average temperature and humidity. • Find
+maximum and minimum values. • Identify abnormal readings. • Create
+graphs and charts. • Understand patterns in industrial sensor data.
+
+Example: In a factory, temperature and humidity sensors monitor the
+environment. If temperature becomes too high, the system can alert the
+operator.
+
+3.  Software required
+
+• Microsoft Excel • IoT Temperature and Humidity Dataset • Computer or
+laptop
+
+4.  Dataset format
+
+Timestamp | Temperature | Humidity [TIME_1] | [TEMP_1] | [HUMIDITY_1]
+[TIME_2] | [TEMP_2] | [HUMIDITY_2] [TIME_3] | [TEMP_3] | [HUMIDITY_3]
+
+These are example column names, not actual sensor readings.
+
+5.  Working principle
+
+IoT Sensors Collect temperature and humidity
+
+↓
+
+Dataset Stores collected data
+
+↓
+
+Microsoft Excel Cleans and analyzes data
+
+↓
+
+Analysis and Charts Displays results and patterns
+
+6.  Step-by-step procedure
+
+Step 1: Import dataset
+
+1.  Open Microsoft Excel.
+2.  Click File → Open.
+3.  Select the IoT dataset from [DATASET_PATH].
+4.  Check whether timestamp, temperature and humidity are displayed in
+    separate columns.
+
+Step 2: Clean the dataset
+
+1.  Select the complete dataset.
+2.  Go to Data → Remove Duplicates.
+3.  Check for blank cells.
+4.  Correct incorrect data formats.
+5.  Ensure temperature and humidity are numerical values.
+
+Step 3: Calculate statistical values
+
+Assume: • Column A = Timestamp • Column B = Temperature • Column C =
+Humidity
+
+Operation | Excel formula Average temperature | =AVERAGE(B2:B100)
+Maximum temperature | =MAX(B2:B100) Minimum temperature | =MIN(B2:B100)
+Average humidity | =AVERAGE(C2:C100) Maximum humidity | =MAX(C2:C100)
+Minimum humidity | =MIN(C2:C100) Temperature standard deviation |
+=STDEV.S(B2:B100)
+
+Replace row 100 with the last row of your dataset.
+
+Step 4: Identify abnormal temperature
+
+Add a new column called Status.
+
+Enter this formula in D2:
+
+    =IF(B2>[TEMP_LIMIT],"High","Normal")
+
+Replace [TEMP_LIMIT] with a numerical temperature limit.
+
+Drag the formula down to apply it to all records.
+
+Step 5: Create charts
+
+1.  Select Timestamp and Temperature columns.
+2.  Go to Insert → Line Chart.
+3.  Create a temperature graph.
+4.  Repeat the process for humidity.
+5.  Add suitable chart titles.
+
+Recommended charts:
+
+• Temperature vs Time – Line Chart. • Humidity vs Time – Line Chart. •
+Average Temperature – Column Chart.
+
+7.  Complete Excel program using VBA
+
+If your examiner asks for a program, you can use this VBA macro to
+automate the analysis.
+
+Dataset requirements:
+
+• Worksheet name: Data • Row 1 must contain these exact headers:
+Timestamp, Temperature, Humidity. • Replace [TEMP_LIMIT] with a
+numerical value.
+
+    Sub IndustrialDataAnalysis()
+
+        Const TEMP_LIMIT As Double = [TEMP_LIMIT]
+
+        Dim ws As Worksheet
+        Dim report As Worksheet
+
+        Dim lastRow As Long
+        Dim tempCol As Long
+        Dim humidityCol As Long
+        Dim timeCol As Long
+
+        Dim i As Long
+
+        Dim avgTemp As Double
+        Dim maxTemp As Double
+        Dim minTemp As Double
+
+        Dim avgHumidity As Double
+        Dim maxHumidity As Double
+        Dim minHumidity As Double
+
+        Dim highCount As Long
+
+        Set ws = ThisWorkbook.Worksheets("Data")
+
+        lastRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row
+
+        'Find columns using headers
+
+        For i = 1 To ws.Cells(1, ws.Columns.Count).End(xlToLeft).Column
+
+            Select Case LCase(Trim(CStr(ws.Cells(1, i).Value)))
+
+                Case "timestamp"
+                    timeCol = i
+
+                Case "temperature"
+                    tempCol = i
+
+                Case "humidity"
+                    humidityCol = i
+
+            End Select
+
+        Next i
+
+        If timeCol = 0 Or tempCol = 0 Or humidityCol = 0 Then
+            MsgBox "Required dataset columns are missing."
+            Exit Sub
+        End If
+
+        'Calculate statistical values
+
+        avgTemp = Application.WorksheetFunction.Average( _
+            ws.Range(ws.Cells(2, tempCol), ws.Cells(lastRow, tempCol)))
+
+        maxTemp = Application.WorksheetFunction.Max( _
+            ws.Range(ws.Cells(2, tempCol), ws.Cells(lastRow, tempCol)))
+
+        minTemp = Application.WorksheetFunction.Min( _
+            ws.Range(ws.Cells(2, tempCol), ws.Cells(lastRow, tempCol)))
+
+        avgHumidity = Application.WorksheetFunction.Average( _
+            ws.Range(ws.Cells(2, humidityCol), ws.Cells(lastRow, humidityCol)))
+
+        maxHumidity = Application.WorksheetFunction.Max( _
+            ws.Range(ws.Cells(2, humidityCol), ws.Cells(lastRow, humidityCol)))
+
+        minHumidity = Application.WorksheetFunction.Min( _
+            ws.Range(ws.Cells(2, humidityCol), ws.Cells(lastRow, humidityCol)))
+
+        'Create status column
+
+        ws.Cells(1, 4).Value = "Status"
+
+        highCount = 0
+
+        For i = 2 To lastRow
+
+            If IsNumeric(ws.Cells(i, tempCol).Value) _
+            And Len(ws.Cells(i, tempCol).Value) > 0 Then
+
+                If CDbl(ws.Cells(i, tempCol).Value) > TEMP_LIMIT Then
+
+                    ws.Cells(i, 4).Value = "High"
+                    highCount = highCount + 1
+
+                Else
+
+                    ws.Cells(i, 4).Value = "Normal"
+
+                End If
+
+            Else
+
+                ws.Cells(i, 4).Value = "Missing/Invalid"
+
+            End If
+
+        Next i
+
+        'Create analysis sheet
+
+        On Error Resume Next
+        Set report = ThisWorkbook.Worksheets("Analysis")
+        On Error GoTo 0
+
+        If report Is Nothing Then
+
+            Set report = ThisWorkbook.Worksheets.Add
+            report.Name = "Analysis"
+
+        Else
+
+            report.Cells.Clear
+
+            For i = report.ChartObjects.Count To 1 Step -1
+                report.ChartObjects(i).Delete
+            Next i
+
+        End If
+
+        'Display results
+
+        report.Range("A1").Value = "Industrial Data Analysis"
+
+        report.Range("A3").Value = "Parameter"
+        report.Range("B3").Value = "Temperature"
+        report.Range("C3").Value = "Humidity"
+
+        report.Range("A4").Value = "Average"
+        report.Range("B4").Value = avgTemp
+        report.Range("C4").Value = avgHumidity
+
+        report.Range("A5").Value = "Maximum"
+        report.Range("B5").Value = maxTemp
+        report.Range("C5").Value = maxHumidity
+
+        report.Range("A6").Value = "Minimum"
+        report.Range("B6").Value = minTemp
+        report.Range("C6").Value = minHumidity
+
+        report.Range("A8").Value = "High Temperature Records"
+        report.Range("B8").Value = highCount
+
+        report.Columns("A:C").AutoFit
+
+        'Create temperature chart
+
+        Dim chart1 As ChartObject
+
+        Set chart1 = report.ChartObjects.Add( _
+            Left:=20, Top:=180, Width:=450, Height:=250)
+
+        With chart1.Chart
+
+            .ChartType = xlLine
+
+            .SeriesCollection.NewSeries
+
+            .SeriesCollection(1).Name = "Temperature"
+
+            .SeriesCollection(1).XValues = _
+                ws.Range(ws.Cells(2, timeCol), ws.Cells(lastRow, timeCol))
+
+            .SeriesCollection(1).Values = _
+                ws.Range(ws.Cells(2, tempCol), ws.Cells(lastRow, tempCol))
+
+            .HasTitle = True
+            .ChartTitle.Text = "Temperature Analysis"
+
+        End With
+
+        'Create humidity chart
+
+        Dim chart2 As ChartObject
+
+        Set chart2 = report.ChartObjects.Add( _
+            Left:=500, Top:=180, Width:=450, Height:=250)
+
+        With chart2.Chart
+
+            .ChartType = xlLine
+
+            .SeriesCollection.NewSeries
+
+            .SeriesCollection(1).Name = "Humidity"
+
+            .SeriesCollection(1).XValues = _
+                ws.Range(ws.Cells(2, timeCol), ws.Cells(lastRow, timeCol))
+
+            .SeriesCollection(1).Values = _
+                ws.Range(ws.Cells(2, humidityCol), ws.Cells(lastRow, humidityCol))
+
+            .HasTitle = True
+            .ChartTitle.Text = "Humidity Analysis"
+
+        End With
+
+        MsgBox "Industrial Data Analysis Completed!"
+
+    End Sub
+
+How to run the VBA program:
+
+1.  Open your Excel dataset.
+2.  Save the workbook as an Excel Macro-Enabled Workbook (.xlsm).
+3.  Press Alt + F11.
+4.  Select Insert → Module.
+5.  Paste the VBA code.
+6.  Replace [TEMP_LIMIT] with a numerical value.
+7.  Press F5 to run the macro.
+8.  Select the Analysis worksheet.
+9.  View the statistical results and charts.
+
+The macro expects numeric temperature and humidity values and valid
+timestamps. Check for empty datasets before running.
+
+8.  Expected output
+
+The Analysis sheet will display:
+
+Parameter | Temperature | Humidity Average | Calculated value |
+Calculated value Maximum | Calculated value | Calculated value Minimum |
+Calculated value | Calculated value
+
+It will also generate:
+
+• Temperature line chart. • Humidity line chart. • Number of
+high-temperature records. • Normal and high status for each reading in
+the Data sheet.
+
+9.  Viva questions
+
+Q1. What is industrial data analysis?
+
+It is the process of collecting, processing and analyzing industrial
+data to understand performance and identify problems.
+
+Q2. What is IoT?
+
+Internet of Things connects physical devices to the internet for data
+collection and communication.
+
+Q3. Why is Excel used?
+
+Excel is used for data organization, calculations, analysis and
+visualization.
+
+Q4. What is a dataset?
+
+A dataset is a collection of related data arranged in rows and columns.
+
+Q5. What is a PivotTable?
+
+It is an Excel feature used to summarize large amounts of data.
+
+Q6. What is a line chart?
+
+A line chart displays changes in data over time.
+
+Q7. What is standard deviation?
+
+It measures how much data values vary from their average.
+
+============================================================ FINAL
+REVISION: IMPORTANT DIFFERENCES BETWEEN ALL FIVE PRACTICALS
+============================================================
+
+Practical | Main component/software | Main function 1 | TMP36 + Arduino
+Uno | Temperature monitoring 2 | PIR + Arduino Uno | Motion detection 3
+| ESP32 + Wi-Fi | Wireless LED control 4 | Arduino + TMP36 + Relays |
+Smart home automation 5 | Microsoft Excel | Industrial data analysis
+
+Most important code functions to remember
+
+Function | Purpose pinMode() | Sets pin as INPUT or OUTPUT digitalRead()
+| Reads digital input digitalWrite() | Controls digital output
+analogRead() | Reads analog input Serial.begin() | Starts serial
+communication Serial.println() | Displays output delay() | Adds a time
+delay WiFi.begin() | Connects ESP32 to Wi-Fi server.begin() | Starts web
+server server.handleClient() | Handles webpage requests AVERAGE() |
+Calculates average in Excel MAX() | Finds maximum value MIN() | Finds
+minimum value
+
+Important for your examination: Practical 1, 2 and 4 use Arduino Uno C++
+code; Practical 3 uses ESP32 C++; Practical 5 uses Excel formulas and
+VBA. Remember the aim, working principle, pin connections and expected
+output of each experiment.
